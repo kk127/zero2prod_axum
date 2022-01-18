@@ -17,9 +17,6 @@ async fn greet(Path(name): Path<String>) -> impl IntoResponse {
 }
 
 pub fn run(listener: TcpListener) -> Result<String, std::io::Error> {
-    env::set_var("RUST_LOG", "info");
-    env_logger::init();
-
     let app = Router::new()
         .route("/", get(greet))
         .route("/:name", get(greet))
@@ -28,7 +25,6 @@ pub fn run(listener: TcpListener) -> Result<String, std::io::Error> {
     let socket = listener.local_addr().unwrap();
     let port = listener.local_addr().unwrap().port();
     drop(listener);
-    println!("socket: {socket}");
     let server = axum::Server::bind(&socket).serve(app.into_make_service());
     let _ = tokio::spawn(server);
 
