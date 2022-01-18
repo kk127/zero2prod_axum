@@ -1,12 +1,10 @@
-use axum::routing::IntoMakeService;
-use axum::Server;
 use axum::{extract::Path, http::StatusCode, response::IntoResponse, routing::get, Router};
-use log::{debug, info};
+use log::info;
 
 // use serde::{Deserialize, Serialize};
 use env_logger;
 use std::env;
-use std::net::{SocketAddr, TcpListener};
+use std::net::TcpListener;
 
 async fn health_check() -> impl IntoResponse {
     info!("health check");
