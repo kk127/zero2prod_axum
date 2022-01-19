@@ -30,7 +30,7 @@ async fn subscribe_return_a_200_for_valid_form_data() {
     let client = reqwest::Client::new();
     let dest_addr = format!("http://{server_addr}/subscribe");
 
-    let body = "le%20guin&email=ursula_le_guin%40gmail.com";
+    let body = "name=le%20guin&email=ursula_le_guin%40gmail.com";
     let response = client
         .post(dest_addr)
         .body(body)

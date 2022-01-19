@@ -1,9 +1,13 @@
-use axum::{extract::Path, http::StatusCode, response::IntoResponse, routing::get, Router};
+use axum::{
+    extract::{Form, Path},
+    http::StatusCode,
+    response::IntoResponse,
+    routing::{get, post},
+    Router,
+};
 use log::info;
+use serde::Deserialize;
 
-// use serde::{Deserialize, Serialize};
-use env_logger;
-use std::env;
 use std::net::TcpListener;
 
 async fn health_check() -> impl IntoResponse {
@@ -16,11 +20,23 @@ async fn greet(Path(name): Path<String>) -> impl IntoResponse {
     format!("Hello {}", name)
 }
 
+#[derive(Deserialize)]
+struct FormData {
+    name: String,
+    email: String,
+}
+
+async fn subscribe(form: Form<FormData>) -> impl IntoResponse {
+    println!("{}, {}", form.name, form.email);
+    StatusCode::OK
+}
+
 pub fn run(listener: TcpListener) -> Result<String, std::io::Error> {
     let app = Router::new()
         .route("/", get(greet))
         .route("/:name", get(greet))
-        .route("/health_check", get(health_check));
+        .route("/health_check", get(health_check))
+        .route("/subscribe", post(subscribe));
 
     let socket = listener.local_addr().unwrap();
     let port = listener.local_addr().unwrap().port();
