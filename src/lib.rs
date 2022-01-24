@@ -1,3 +1,5 @@
+use std::net::TcpListener;
+
 use axum::{
     extract::{Form, Path},
     http::StatusCode,
@@ -8,7 +10,7 @@ use axum::{
 use log::info;
 use serde::Deserialize;
 
-use std::net::TcpListener;
+use crate::routes::subscribe;
 
 async fn health_check() -> impl IntoResponse {
     info!("health check");
@@ -18,17 +20,6 @@ async fn health_check() -> impl IntoResponse {
 async fn greet(Path(name): Path<String>) -> impl IntoResponse {
     info!("Greetings from {}", name);
     format!("Hello {}", name)
-}
-
-#[derive(Deserialize)]
-struct FormData {
-    name: String,
-    email: String,
-}
-
-async fn subscribe(form: Form<FormData>) -> impl IntoResponse {
-    println!("{}, {}", form.name, form.email);
-    StatusCode::OK
 }
 
 pub fn run(listener: TcpListener) -> Result<String, std::io::Error> {
@@ -46,3 +37,7 @@ pub fn run(listener: TcpListener) -> Result<String, std::io::Error> {
 
     Ok(format!("127.0.0.1:{port}"))
 }
+
+pub mod configuration;
+pub mod routes;
+pub mod startup;
